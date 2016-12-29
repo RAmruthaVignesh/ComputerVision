@@ -23,3 +23,20 @@ def plotimg_from_array(img):
     opimg=array(Image.open(img))
     opimg = imshow(opimg)
     return opimg
+
+def resolution(img):
+    '''This function takes the input of path of the image file and gives the
+    output of resolution of the image'''
+    img = array(Image.open(img))
+    img_resolution = img.shape
+    return img_resolution
+
+def invert(img):
+    '''This function takes in the path of the image file and 
+    inverts the graylevels of the image and returns it'''
+    #Read the image into array after converting to grayscale
+    img = array(Image.open(img).convert('L'))
+    #Perform inversion of graylevels
+    opimg = 255-img
+    #convert the array to image and return it
+    return Image.fromarray(opimg)
