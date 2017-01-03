@@ -6,4 +6,4 @@ def getimlist(path):
     all jpg images in a directory. """
     return [os.path.join(path,f) for f in os.listdir(path) if f.endswith('.JPG')]
 
-print getimlist("../PythonLearning/CV_sampleImages/")
+#print getimlist("../CV_sampleImages/")
