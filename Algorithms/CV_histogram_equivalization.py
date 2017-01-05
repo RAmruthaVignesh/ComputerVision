@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../Learning/')
+sys.path.append('../../PythonLearning/')
 from PIL import Image
 from pylab import *
 import numpy as np
