@@ -1,17 +1,24 @@
 from PIL import Image
 from pylab import *
 from numpy import *
+import os
 
-def pca(img):
-    img = array(Image.open(img).convert('L'))
+def getimlist(path):
+    """ Returns a list of filenames for
+    all jpg images in a directory. """
+    return [os.path.join(path,f) for f in os.listdir(path) if f.endswith('.pgm')]
+
+def pca(flat_img_array):
+    ''' Gets the input of a matrix with the flattened arrays in rows. 
+    Returns the projection matrix,variance and mean'''
 
     #get dimensions
-    num_data,dim = img.shape
+    num_data,dim = flat_img_array.shape
 
     #calculate mean for each dimension
-    mean_each_dim = img.mean(axis=0) #axis =0 calculates the column mean
+    mean_each_dim = flat_img_array.mean(axis=0) #axis =0 calculates the column mean
     #calculate the variance - distance from the mean
-    SD_img = img - mean_each_dim 
+    SD_img = flat_img_array - mean_each_dim 
 
     if dim > num_data:
         #calculates the covariance matrix as AA' instead of A'A by compact trick
@@ -32,10 +39,26 @@ def pca(img):
     #Return the Eigen vectos , singular values,mean
     return V,s,mean_each_dim
 
-V,s,immean = pca("../CV_sampleImages/IMG_6628.JPG")
-img = array(Image.open("../CV_sampleImages/IMG_6628.JPG").convert('L'))
-m,n = img.shape[0:2]
+#list of all images in a folder
+imlist = getimlist("../CV_sampleImages/s1")
+#Read 1 image to get the size
+im = array(Image.open(imlist[0]))
+m,n = im.shape[0:2]
+#total number of images in the list
+imnbr = len(imlist)
+
+#create a matrix to store all flattened images
+immatrix = array([array(Image.open(im)).flatten() for im in imlist],'f')
+#Apply PCA
+V,s,immean = pca(immatrix)
+
+
 figure()
 gray()
-imshow(V)
+subplot(2,4,1)
+imshow(immean.reshape(m,n))
+for i in range(7):
+    subplot(2,4,i+2)
+    imshow(V[i].reshape(m,n))
 show()
+
