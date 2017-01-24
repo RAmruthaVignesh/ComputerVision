@@ -1,6 +1,7 @@
 from PIL import Image
 from pylab import *
 from numpy import *
+import pickle
 import os
 
 def getimlist(path):
@@ -44,13 +45,26 @@ imlist = getimlist("../CV_sampleImages/s1")
 #Read 1 image to get the size
 im = array(Image.open(imlist[0]))
 m,n = im.shape[0:2]
-#total number of images in the list
-imnbr = len(imlist)
 
-#create a matrix to store all flattened images
-immatrix = array([array(Image.open(im)).flatten() for im in imlist],'f')
-#Apply PCA
-V,s,immean = pca(immatrix)
+if os.path.isfile('pca_values.pkl') == False : #If the pickle file doesn't exist
+
+    #total number of images in the list
+    imnbr = len(imlist)
+
+    #create a matrix to store all flattened images
+    immatrix = array([array(Image.open(im)).flatten() for im in imlist],'f')
+    #Apply PCA
+    V,s,immean = pca(immatrix)
+
+    #Picking the file
+    with open('pca_values.pkl','wb') as f:
+        pickle.dump(immean,f)
+        pickle.dump(V,f)
+
+#open the pickle file and load
+with open('pca_values.pkl','rb') as f:
+    immean = pickle.load(f)
+    V=pickle.load(f)
 
 
 figure()
@@ -61,4 +75,7 @@ for i in range(7):
     subplot(2,4,i+2)
     imshow(V[i].reshape(m,n))
 show()
+
+
+
 
